@@ -17,6 +17,7 @@ from stealerlogs.errors import (
     ServerError,
 )
 from stealerlogs.models import (
+    Account,
     CookiesResponse,
     CredentialsResponse,
     File,
@@ -152,6 +153,9 @@ class Client:
     def __exit__(self, *exc: object) -> None:
         self.close()
 
+    def me(self) -> Account:
+        return self._get("/me", {}, Account)
+
     def search(
         self,
         query: str,
@@ -237,6 +241,9 @@ class AsyncClient:
 
     async def __aexit__(self, *exc: object) -> None:
         await self.aclose()
+
+    async def me(self) -> Account:
+        return await self._get("/me", {}, Account)
 
     async def search(
         self,

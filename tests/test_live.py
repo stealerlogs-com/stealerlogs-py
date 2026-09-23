@@ -38,6 +38,19 @@ def test_log_endpoints() -> None:
             assert content.path == files.items[0].path
 
 
+def test_me() -> None:
+    with Client(API_KEY) as sl:  # type: ignore[arg-type]
+        account = sl.me()
+        assert account.plan
+        assert account.plan_name
+        assert account.expires_at
+        assert account.days_left >= 0
+        assert account.limits.searches_per_day >= 0
+        assert account.limits.searches_used >= 0
+        assert account.limits.searches_remaining >= 0
+        assert account.limits.resets_at
+
+
 def test_invalid_key() -> None:
     with Client("sl_invalid") as sl:
         with pytest.raises(InvalidAPIKeyError):

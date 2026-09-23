@@ -96,3 +96,19 @@ class FilesResponse(APIModel):
     has_next: bool = Field(alias="hasNext")
     has_prev: bool = Field(alias="hasPrev")
     items: list[File] = Field(default_factory=list)
+
+
+class SearchLimits(APIModel):
+    searches_per_day: int = Field(alias="searchesPerDay")
+    searches_used: int = Field(alias="searchesUsed")
+    searches_remaining: int = Field(alias="searchesRemaining")
+    resets_at: str = Field(alias="resetsAt")
+
+
+class Account(APIModel):
+    plan: str
+    plan_name: str = Field(alias="planName")
+    active: bool
+    expires_at: str = Field(alias="expiresAt")
+    days_left: int = Field(alias="daysLeft")
+    limits: SearchLimits

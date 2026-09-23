@@ -161,6 +161,24 @@ if __name__ == "__main__":
 </details>
 
 <details>
+<summary>Account</summary>
+
+```python
+from stealerlogs import Client
+
+def main() -> None:
+    with Client("MY_API_KEY") as sl:
+        account = sl.me()
+        print(account.plan_name, account.days_left)
+        print(account.limits.searches_remaining)
+
+if __name__ == "__main__":
+    main()
+```
+
+</details>
+
+<details>
 <summary>Async client</summary>
 
 ```python

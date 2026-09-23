@@ -15,6 +15,20 @@ from stealerlogs import (
     SearchType,
 )
 
+ACCOUNT = {
+    "plan": "access",
+    "planName": "Access",
+    "active": True,
+    "expiresAt": "2026-10-22T18:00:00.000Z",
+    "daysLeft": 29,
+    "limits": {
+        "searchesPerDay": 1000,
+        "searchesUsed": 12,
+        "searchesRemaining": 988,
+        "resetsAt": "2026-09-24T00:00:00.000Z",
+    },
+}
+
 
 def make_client(respond) -> tuple[Client, list[httpx.Request]]:
     seen: list[httpx.Request] = []
@@ -25,6 +39,26 @@ def make_client(respond) -> tuple[Client, list[httpx.Request]]:
 
     http = httpx.Client(transport=httpx.MockTransport(handler))
     return Client("sl_test_key", http=http), seen
+
+
+def test_me() -> None:
+    def respond(request: httpx.Request) -> httpx.Response:
+        assert request.url.path == "/api/me"
+        assert request.url.query == b""
+        assert request.headers["Authorization"] == "Bearer sl_test_key"
+        return httpx.Response(200, json=ACCOUNT)
+
+    sl, _ = make_client(respond)
+    account = sl.me()
+    assert account.plan == "access"
+    assert account.plan_name == "Access"
+    assert account.active is True
+    assert account.expires_at == "2026-10-22T18:00:00.000Z"
+    assert account.days_left == 29
+    assert account.limits.searches_per_day == 1000
+    assert account.limits.searches_used == 12
+    assert account.limits.searches_remaining == 988
+    assert account.limits.resets_at == "2026-09-24T00:00:00.000Z"
 
 
 def test_search_sends_flags_and_parses_hits() -> None:
@@ -238,5 +272,21 @@ def test_async_search() -> None:
         async with AsyncClient("sl_test_key", http=http) as sl:
             resp = await sl.search("example@example.com", type="email")
             assert resp.hits == []
+
+    asyncio.run(run())
+
+
+def test_async_me() -> None:
+    def respond(request: httpx.Request) -> httpx.Response:
+        assert request.url.path == "/api/me"
+        return httpx.Response(200, json=ACCOUNT)
+
+    http = httpx.AsyncClient(transport=httpx.MockTransport(respond))
+
+    async def run() -> None:
+        async with AsyncClient("sl_test_key", http=http) as sl:
+            account = await sl.me()
+            assert account.plan == "access"
+            assert account.limits.searches_remaining == 988
 
     asyncio.run(run())

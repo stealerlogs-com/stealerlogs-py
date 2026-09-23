@@ -9,6 +9,7 @@ from stealerlogs.errors import (
     StealerlogsError,
 )
 from stealerlogs.models import (
+    Account,
     Cookie,
     CookiesResponse,
     Credential,
@@ -17,6 +18,7 @@ from stealerlogs.models import (
     File,
     FilesResponse,
     Hit,
+    SearchLimits,
     SearchResponse,
     SearchType,
 )
@@ -24,6 +26,7 @@ from stealerlogs.models import (
 __all__ = [
     "DEFAULT_BASE_URL",
     "APIError",
+    "Account",
     "AsyncClient",
     "Client",
     "Cookie",
@@ -38,6 +41,7 @@ __all__ = [
     "InvalidRequestError",
     "NotFoundError",
     "RateLimitError",
+    "SearchLimits",
     "SearchResponse",
     "SearchType",
     "ServerError",
